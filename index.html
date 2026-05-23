@@ -1,64 +1,263 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>OrixCourse — YouTube Automation Mastery</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet"/>
-<style>
-  :root {
-    --red: #FF2D2D;
-    --gold: #FFB800;
-    --dark: #0A0A0A;
-    --dark2: #111111;
-    --dark3: #181818;
-    --gray: #2A2A2A;
-    --text: #E8E8E8;
-    --muted: #888;
-    --white: #FFFFFF;
-  }
-  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OrixCourse | YouTube Automation</title>
+    <style>
+        /* === BASE STYLES === */
+        :root {
+            --bg-color: #0d0d12;
+            --surface-color: #1a1a24;
+            --primary: #6366f1;
+            --primary-hover: #4f46e5;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --accent: #10b981;
+        }
 
-  html { scroll-behavior: smooth; }
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
 
-  body {
-    background: var(--dark);
-    color: var(--text);
-    font-family: 'DM Sans', sans-serif;
-    overflow-x: hidden;
-  }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
 
-  /* ── NOISE OVERLAY ── */
-  body::before {
-    content: '';
-    position: fixed; inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none; z-index: 9999; opacity: 0.35;
-  }
+        /* === LOGIN VIEW === */
+        #login-view {
+            background-color: var(--surface-color);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+            transition: opacity 0.5s ease;
+        }
 
-  /* ── NAV ── */
-  nav {
-    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 18px 48px;
-    background: rgba(10,10,10,0.85);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(255,255,255,0.05);
-  }
-  .logo {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 28px;
-    letter-spacing: 3px;
-    color: var(--white);
-  }
-  .logo span { color: var(--red); }
-  nav .nav-links { display: flex; gap: 36px; list-style: none; }
-  nav .nav-links a {
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: var(--muted);
+        .logo {
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+        }
+
+        .logo span { color: var(--primary); }
+
+        .input-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: var(--text-muted);
+            font-size: 14px;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border-radius: 6px;
+            border: 1px solid #333;
+            background-color: #0f0f14;
+            color: white;
+            outline: none;
+            transition: border 0.3s;
+        }
+
+        .input-group input:focus { border-color: var(--primary); }
+
+        button {
+            width: 100%;
+            padding: 12px;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        button:hover { background-color: var(--primary-hover); }
+
+        /* === DASHBOARD VIEW (Hidden initially) === */
+        #dashboard-view {
+            display: none;
+            width: 100%;
+            max-width: 1000px;
+            min-height: 100vh;
+            padding: 40px 20px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 40px;
+            border-bottom: 1px solid #333;
+            padding-bottom: 20px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            background-color: var(--primary);
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+        }
+
+        .course-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .module-card {
+            background-color: var(--surface-color);
+            border-radius: 10px;
+            padding: 25px;
+            border-left: 4px solid var(--primary);
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .module-card:hover { transform: translateY(-5px); }
+        .module-number { color: var(--accent); font-size: 12px; font-weight: bold; text-transform: uppercase; letter-spacing: 1px;}
+        .module-title { font-size: 20px; margin: 10px 0; }
+        .module-desc { color: var(--text-muted); font-size: 14px; line-height: 1.5; }
+
+        .progress-bar {
+            width: 100%;
+            height: 6px;
+            background-color: #333;
+            border-radius: 3px;
+            margin-top: 15px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background-color: var(--primary);
+            width: 0%; /* Adjusted via JS */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LOGIN SCREEN -->
+    <div id="login-view">
+        <div class="logo">ORIX<span>COURSE</span></div>
+        <p style="color: var(--text-muted); margin-bottom: 25px;">Member Portal Access</p>
+        
+        <form id="login-form">
+            <div class="input-group">
+                <label for="email">Email Address</label>
+                <input type="email" id="email" required placeholder="member@example.com">
+            </div>
+            <div class="input-group">
+                <label for="password">Password</label>
+                <input type="password" id="password" required placeholder="••••••••">
+            </div>
+            <button type="submit">Enter Course</button>
+        </form>
+    </div>
+
+    <!-- COURSE DASHBOARD -->
+    <div id="dashboard-view">
+        <header>
+            <div class="logo">ORIX<span>COURSE</span></div>
+            <div class="user-profile">
+                <span id="welcome-text">Welcome, Creator</span>
+                <div class="avatar">C</div>
+            </div>
+        </header>
+
+        <h2 style="margin-bottom: 20px;">Your Curriculum</h2>
+        
+        <div class="course-grid">
+            <div class="module-card">
+                <div class="module-number">Module 1</div>
+                <h3 class="module-title">The Faceless Blueprint</h3>
+                <p class="module-desc">Select high-RPM niches and architect a channel designed for rapid growth.</p>
+                <div class="progress-bar"><div class="progress-fill" style="width: 100%;"></div></div>
+            </div>
+
+            <div class="module-card">
+                <div class="module-number">Module 2</div>
+                <h3 class="module-title">High-Retention Scripting</h3>
+                <p class="module-desc">Master the 20-30 second viral script format. No fluff, just rapid pacing.</p>
+                <div class="progress-bar"><div class="progress-fill" style="width: 45%;"></div></div>
+            </div>
+
+            <div class="module-card">
+                <div class="module-number">Module 3</div>
+                <h3 class="module-title">Audio & Voice Generation</h3>
+                <p class="module-desc">Creating atmospheric audio beds and utilizing text-to-speech effectively.</p>
+                <div class="progress-bar"><div class="progress-fill" style="width: 0%;"></div></div>
+            </div>
+
+            <div class="module-card">
+                <div class="module-number">Module 4</div>
+                <h3 class="module-title">Visuals & Editing Flow</h3>
+                <p class="module-desc">AI image generation and CapCut timeline mastery for seamless video assembly.</p>
+                <div class="progress-bar"><div class="progress-fill" style="width: 0%;"></div></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Vanilla JS for UI Interaction
+        document.getElementById('login-form').addEventListener('submit', function(e) {
+            e.preventDefault(); // Prevent page reload
+            
+            // In a real app, you would authenticate here.
+            // For now, we simulate a successful login transition.
+            
+            const loginView = document.getElementById('login-view');
+            const dashboardView = document.getElementById('dashboard-view');
+            
+            // Fade out login
+            loginView.style.opacity = '0';
+            
+            setTimeout(() => {
+                loginView.style.display = 'none';
+                dashboardView.style.display = 'block';
+                
+                // Trigger reflow to ensure the fade-in works
+                void dashboardView.offsetWidth; 
+                
+                // Fade in dashboard
+                dashboardView.style.opacity = '1';
+            }, 500); // Wait for the 0.5s CSS transition
+        });
+    </script>
+</body>
+</html>
     text-decoration: none;
     transition: color .2s;
   }
